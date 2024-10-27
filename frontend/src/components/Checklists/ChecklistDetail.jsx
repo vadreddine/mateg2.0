@@ -38,7 +38,7 @@ const ChecklistDetail = () => {
       <ul className="list-group">
         {checklist.items.map(item => (
           <li key={item.id} className="list-group-item">
-            {item.number}. {item.description}
+            <strong>{item.number}.</strong> {item.description} <em>({item.type})</em>
           </li>
         ))}
       </ul>
@@ -47,3 +47,4 @@ const ChecklistDetail = () => {
 };
 
 export default ChecklistDetail;
+  

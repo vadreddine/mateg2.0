@@ -24,11 +24,15 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    console.log('Submitting values:', values);
+
     try {
       await authService.signup(values);
       alert('Inscription réussie!');
       navigate('/signin');
     } catch (error) {
+      console.error('Erreur lors de l inscription', error);
+
       if (error.response && error.response.data) {
         setErrors({ submit: error.response.data.message });
       } else {

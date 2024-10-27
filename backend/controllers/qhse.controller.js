@@ -11,6 +11,8 @@ const FilledChecklist = db.filledChecklist; // Si vous avez un modèle pour les 
 // Créer une nouvelle checklist
 exports.createChecklist = async (req, res) => {
   try {
+    console.log('Creating checklist with data:', req.body); // Ajout de log
+
     const checklist = await Checklist.create({
       name: req.body.name,
       frequency: req.body.frequency,
@@ -20,6 +22,7 @@ exports.createChecklist = async (req, res) => {
       const items = req.body.items.map((item) => ({
         number: item.number,
         description: item.description,
+        type: item.type, // Assurez-vous que le type est fourni
         checklistId: checklist.id,
       }));
       await Item.bulkCreate(items);
@@ -27,9 +30,11 @@ exports.createChecklist = async (req, res) => {
 
     res.send({ message: 'Checklist créée avec succès.' });
   } catch (err) {
+    console.error('Erreur lors de la création de la checklist:', err); // Ajout de log
     res.status(500).send({ message: err.message });
   }
 };
+
 
 // Récupérer toutes les checklists
 exports.findAllChecklists = async (req, res) => {
@@ -77,6 +82,7 @@ exports.updateChecklist = async (req, res) => {
       const items = req.body.items.map((item) => ({
         number: item.number,
         description: item.description,
+        type: item.type,
         checklistId: checklist.id,
       }));
       await Item.bulkCreate(items);

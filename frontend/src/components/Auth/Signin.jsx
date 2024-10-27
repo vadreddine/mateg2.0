@@ -21,6 +21,7 @@ const Signin = () => {
   const { setAuth } = useAuth();
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    console.log('Submitting values:', values);
     try {
       const data = await authService.signin(values);
       setAuth(data);
@@ -28,6 +29,8 @@ const Signin = () => {
       localStorage.setItem('user', JSON.stringify(data));
       navigate('/dashboard');
     } catch (error) {
+      console.error('Erreur lors de login', error);
+
       if (error.response && error.response.data) {
         setErrors({ submit: error.response.data.message });
       } else {

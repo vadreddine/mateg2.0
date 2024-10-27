@@ -40,12 +40,14 @@ const FillChecklist = () => {
   }, [id]);
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    console.log('Submitting values:', values);
+
     try {
       await api.post(`/qhse/checklists/${id}/fill`, values);
       alert('Checklist remplie avec succès!');
       navigate('/checklists');
     } catch (error) {
-      console.error('Erreur lors de la soumission de la checklist', error);
+      console.error('Erreur lors de la remplissage de la checklist', error);
       if (error.response && error.response.data) {
         setErrors({ submit: error.response.data.message });
       } else {
@@ -85,17 +87,50 @@ const FillChecklist = () => {
             {values.items.map((item, index) => (
               <div className="card mb-3" key={item.id}>
                 <div className="card-body">
-                  <div className="form-check mb-2">
-                    <Field
-                      type="checkbox"
-                      name={`items.${index}.completed`}
-                      className="form-check-input"
-                      id={`items.${index}.completed`}
-                    />
-                    <label className="form-check-label" htmlFor={`items.${index}.completed`}>
-                      {item.description}
-                    </label>
-                  </div>
+                  {checklist.items[index].type === 'boolean' && (
+                    <div className="form-check mb-2">
+                      <Field
+                        type="checkbox"
+                        name={`items.${index}.completed`}
+                        className="form-check-input"
+                        id={`items.${index}.completed`}
+                      />
+                      <label className="form-check-label" htmlFor={`items.${index}.completed`}>
+                        {item.description}
+                      </label>
+                    </div>
+                  )}
+
+                  {checklist.items[index].type === 'checkbox' && (
+                    <div className="form-check mb-2">
+                      <Field
+                        type="checkbox"
+                        name={`items.${index}.completed`}
+                        className="form-check-input"
+                        id={`items.${index}.completed`}
+                      />
+                      <label className="form-check-label" htmlFor={`items.${index}.completed`}>
+                        {item.description}
+                      </label>
+                    </div>
+                  )}
+
+                  {checklist.items[index].type === 'text' && (
+                    <div className="mb-3">
+                      <label htmlFor={`items.${index}.completed`} className="form-label">
+                        {item.description}
+                      </label>
+                      <Field
+                        type="text"
+                        name={`items.${index}.completed`}
+                        className="form-control"
+                        id={`items.${index}.completed`}
+                      />
+                      <ErrorMessage name={`items.${index}.completed`} component="div" className="text-danger" />
+                    </div>
+                  )}
+
+                  {/* Commentaire optionnel */}
                   <div className="mb-3">
                     <label htmlFor={`items.${index}.comment`} className="form-label">Commentaire (optionnel)</label>
                     <Field
