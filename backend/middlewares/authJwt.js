@@ -5,7 +5,7 @@ const config = require('../config/auth.config');
 const db = require('../models');
 const User = db.user;
 
-verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   let token = req.headers['x-access-token'] || req.headers['authorization'];
 
   if (!token) {
@@ -13,7 +13,6 @@ verifyToken = (req, res, next) => {
   }
 
   if (token.startsWith('Bearer ')) {
-    // Supprimer 'Bearer ' du token
     token = token.slice(7, token.length);
   }
 
@@ -26,7 +25,7 @@ verifyToken = (req, res, next) => {
   });
 };
 
-isAdmin = async (req, res, next) => {
+const isAdmin = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userId);
     const roles = await user.getRoles();
@@ -44,9 +43,26 @@ isAdmin = async (req, res, next) => {
   }
 };
 
-const authJwt = {
-  verifyToken: verifyToken,
-  isAdmin: isAdmin,
+const isModerator = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userId);
+    const roles = await user.getRoles();
+
+    for (let i = 0; i < roles.length; i++) {
+      if (roles[i].name === 'moderator') {
+        next();
+        return;
+      }
+    }
+
+    res.status(403).send({ message: 'Rôle modérateur requis!' });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-module.exports = authJwt;
+module.exports = {
+  verifyToken,
+  isAdmin,
+  isModerator,
+};

@@ -19,7 +19,7 @@ require('./routes/user.routes')(app);
 require('./routes/qhse.routes')(app);
 
 // Synchronisation de la base de données et initialisation des rôles
-db.sequelize.sync({ force: false }).then(() => {
+db.sequelize.sync({ force: true }).then(() => {
   console.log('La base de données a été synchronisée.');
   initial();
 });

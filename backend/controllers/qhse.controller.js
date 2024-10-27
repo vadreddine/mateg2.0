@@ -4,6 +4,10 @@ const db = require('../models');
 const Checklist = db.checklist;
 const Item = db.item;
 
+const Response = db.response; // Assurez-vous que le modèle Response est correctement défini
+const FilledChecklist = db.filledChecklist; // Si vous avez un modèle pour les checklists remplies
+
+
 // Créer une nouvelle checklist
 exports.createChecklist = async (req, res) => {
   try {
@@ -94,6 +98,41 @@ exports.deleteChecklist = async (req, res) => {
     } else {
       res.send({ message: `Impossible de supprimer la checklist avec id=${req.params.id}. Peut-être qu'elle n'existe pas!` });
     }
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
+
+exports.fillChecklist = async (req, res) => {
+  try {
+    const checklistId = req.params.id;
+    const userId = req.userId; // Supposons que l'ID utilisateur est disponible via le middleware authJwt
+
+    const checklist = await Checklist.findByPk(checklistId, {
+      include: ['items'],
+    });
+
+    if (!checklist) {
+      return res.status(404).send({ message: 'Checklist non trouvée.' });
+    }
+
+    const filledItems = req.body.items.map(item => ({
+      itemId: item.id,
+      completed: item.completed,
+      comment: item.comment,
+      userId: userId,
+      checklistId: checklistId,
+    }));
+
+    // Créer une nouvelle réponse pour la checklist
+    const response = await Response.create({
+      userId: userId,
+      checklistId: checklistId,
+      items: filledItems, // Assurez-vous que la relation est correctement définie
+    });
+
+    res.status(200).send({ message: 'Checklist remplie avec succès.', response });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

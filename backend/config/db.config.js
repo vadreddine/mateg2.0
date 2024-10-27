@@ -2,9 +2,9 @@
 
 module.exports = {
     HOST: 'localhost',
-    USER: 'your_database_username',
-    PASSWORD: 'your_database_password',
-    DB: 'your_database_name',
+    USER: 'root',
+    PASSWORD: '',
+    DB: 'mategdb',
     dialect: 'mysql',
     pool: {
       max: 5,

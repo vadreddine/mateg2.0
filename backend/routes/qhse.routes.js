@@ -1,6 +1,6 @@
 // routes/qhse.routes.js
 
-const { authJwt } = require('../middlewares');
+const authJwt = require('../middlewares/authJwt');
 const controller = require('../controllers/qhse.controller');
 
 module.exports = function (app) {
@@ -46,4 +46,12 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.deleteChecklist
   );
+
+
+ // Remplir une checklist par ID
+ app.post(
+  '/api/qhse/checklists/:id/fill',
+  [authJwt.verifyToken],
+  controller.fillChecklist
+);
 };
